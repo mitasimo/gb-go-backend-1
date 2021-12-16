@@ -26,7 +26,7 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Printf("error occuried when accept connection: %v\n", err)
+			log.Fatalf("error occuried when accept connection: %v\n", err)
 		}
 
 		handleConnection(conn)

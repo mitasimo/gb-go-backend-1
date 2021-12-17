@@ -29,7 +29,7 @@ func main() {
 			log.Fatalf("error occuried when accept connection: %v\n", err)
 		}
 
-		handleConnection(conn)
+		go handleConnection(conn)
 	}
 }
 

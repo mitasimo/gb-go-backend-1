@@ -9,14 +9,13 @@ import (
 )
 
 func main() {
-
 	conn, err := net.Dial("tcp", "localhost:7319")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer func() {
-		err := conn.Close()
+		err = conn.Close()
 		if err != nil {
 			log.Fatalln(err)
 		}

@@ -7,8 +7,10 @@ import (
 	"time"
 )
 
+const serverAddr = "0.0.0.0:7319"
+
 func main() {
-	listener, err := net.Listen("tcp", ":7319")
+	listener, err := net.Listen("tcp4", serverAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,7 +28,8 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Fatalf("error occuried when accept connection: %v\n", err)
+			log.Printf("error occuried when accept connection: %v\n", err)
+			return
 		}
 
 		go handleConnection(conn)

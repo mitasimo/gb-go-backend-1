@@ -22,6 +22,7 @@ func main() {
 	}
 
 	go broadcaster()
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {

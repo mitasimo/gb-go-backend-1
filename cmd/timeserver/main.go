@@ -1,16 +1,21 @@
 package main
 
 import (
+	"bufio"
 	"io"
 	"log"
 	"net"
+	"os"
 	"time"
 )
 
 const serverAddr = "0.0.0.0:7319"
 
 func main() {
-	listener, err := net.Listen("tcp4", serverAddr)
+
+	var clients = make(map[string]net.Conn)
+
+	listener, err := net.Listen("tcp", serverAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,6 +30,8 @@ func main() {
 		}
 	}()
 
+	go sendMessageToClients(clients)
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -32,11 +39,14 @@ func main() {
 			return
 		}
 
-		go handleConnection(conn)
+		// добавить соединение в мапу
+		clients[connName(conn)] = conn
+
+		go handleConnection(conn, clients)
 	}
 }
 
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, clients map[string]net.Conn) {
 	defer func() {
 		err := conn.Close()
 		if err != nil {
@@ -49,9 +59,31 @@ func handleConnection(conn net.Conn) {
 		_, err := io.WriteString(conn, time.Now().Format("15:04:05\n\r"))
 		if err != nil {
 			log.Printf("error send time to client: %v", err)
+			// удалить соединение из мапы, так как клиент разорвал соединение
+			delete(clients, connName(conn))
 			break
-		} else {
-			log.Printf("send time to client")
 		}
 	}
+}
+
+// читает строки из стандартного потока вводи и отправляет их всем клинетам
+func sendMessageToClients(clients map[string]net.Conn) {
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		text := scanner.Text()
+		for addr, conn := range clients {
+			_, err := io.WriteString(conn, text)
+			if err != nil {
+				log.Printf("error send text to client %s: %v", addr, err)
+			}
+			_, err = io.WriteString(conn, "\n")
+			if err != nil {
+				log.Printf("error send text to client %s: %v", addr, err)
+			}
+		}
+	}
+}
+
+func connName(conn net.Conn) string {
+	return conn.RemoteAddr().String()
 }

@@ -72,11 +72,7 @@ func sendMessageToClients(clients map[string]net.Conn) {
 	for scanner.Scan() {
 		text := scanner.Text()
 		for addr, conn := range clients {
-			_, err := io.WriteString(conn, text)
-			if err != nil {
-				log.Printf("error send text to client %s: %v", addr, err)
-			}
-			_, err = io.WriteString(conn, "\n")
+			_, err := io.WriteString(conn, text+"\n")
 			if err != nil {
 				log.Printf("error send text to client %s: %v", addr, err)
 			}

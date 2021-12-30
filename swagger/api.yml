@@ -55,26 +55,6 @@ paths:
        200:
          description: successful logout
          content: {}
-securityDefinitions:
- api_key:
-   type: "apiKey"
-   name: "api_key"
-   in: "header"
-   Item:
-     type: object
-     properties:
-       id:
-         type: integer
-         format: int64
-       name:
-         type: string
-       description:
-         type: string
-       price:
-         type: integer // чтобы не потерять точность, денежные поля мы будем передавать
-         format: int64 // в виде целочисленного значения минимальной размерности валюты (например, центы или копейки)
-       image_link:
-         type: string
  /items:
    post:
      summary: "Add a new item to the store"

@@ -78,6 +78,19 @@ paths:
    get:
      summary: Lists Items with filters
      operationId: ListItems
+     parameters:
+     - name: minprice
+       in: query
+       description: Lower price limit
+       required: false
+       schema:
+        type: float
+     - name: maxprice
+       in: query
+       description: Upper price limit
+       required: false
+       schema:
+        type: float
      responses:
        200:
          description: successful operation

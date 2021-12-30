@@ -90,27 +90,6 @@ paths:
        400:
          description: Invalid price range
          content: {} /items/upload_image:
-   post:
-     summary: "uploads an image"
-     operationId: "uploadFile"
-     consumes:
-     - "multipart/form-data"
-     produces:
-     - "application/json"
-     parameters:
-     - name: "additionalMetadata"
-       in: "formData"
-       description: "Additional data to pass to server"
-       required: true
-       type: "string"
-     - name: "file"
-       in: "formData"
-       description: "file to upload"
-       required: true
-       type: "file"
-     responses:
-     security:
-     - api_key: []
  /items/{itemId}:
    get:
      summary: Find item by ID

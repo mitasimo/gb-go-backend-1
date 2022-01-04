@@ -17,9 +17,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 
-	ext := r.FormValue("ext")
-	if ext != "" && !strings.HasPrefix(ext, ".") {
-		ext = "." + ext
+	filterExt := r.FormValue("ext")
+	if filterExt != "" && !strings.HasPrefix(filterExt, ".") {
+		filterExt = "." + filterExt
 	}
 
 	entries, err := os.ReadDir(h.UploadDir)
@@ -28,10 +28,13 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+
 	cnt := 0
 	for _, entry := range entries {
-		fn := entry.Name()
-		if ext != "" && filepath.Ext(fn) != ext {
+		fileName := entry.Name()
+		fileExt := filepath.Ext(fileName)
+		if filterExt != "" && fileExt != filterExt {
 			continue // расширение задано и не соответвтвует расшширению файла
 		}
 		info, err := entry.Info()
@@ -39,7 +42,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			continue
 		}
-		fmt.Fprintf(w, "%s\tsize: %d bytes\n", fn, info.Size())
+		fmt.Fprintf(w, "Name: %s\tExt: %s\tsize: %d bytes\n", fileName, fileExt, info.Size())
 		cnt++
 	}
 	if cnt == 0 {

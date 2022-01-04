@@ -3,13 +3,15 @@ package filelistener
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 )
 
+type FileEnumerator interface {
+	EnumerateFiles(ext string) ([]string, error)
+}
+
 type Handler struct {
-	UploadDir string
+	Enumerator FileEnumerator
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +24,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		filterExt = "." + filterExt
 	}
 
-	entries, err := os.ReadDir(h.UploadDir)
+	filesList, err := h.Enumerator.EnumerateFiles(filterExt)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -30,22 +32,11 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain")
 
-	cnt := 0
-	for _, entry := range entries {
-		fileName := entry.Name()
-		fileExt := filepath.Ext(fileName)
-		if filterExt != "" && fileExt != filterExt {
-			continue // расширение задано и не соответвтвует расшширению файла
-		}
-		info, err := entry.Info()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			continue
-		}
-		fmt.Fprintf(w, "Name: %s\tExt: %s\tsize: %d bytes\n", fileName, fileExt, info.Size())
-		cnt++
-	}
-	if cnt == 0 {
+	if len(filesList) == 0 {
 		fmt.Fprint(w, "No files")
+		return
+	}
+	for _, file := range filesList {
+		fmt.Fprintln(w, file)
 	}
 }

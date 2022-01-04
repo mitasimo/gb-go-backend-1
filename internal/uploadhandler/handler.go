@@ -7,8 +7,12 @@ import (
 	"net/http"
 )
 
+type FileSaver interface {
+	SaveFile(string, []byte) error
+}
+
 type Handler struct {
-	UploadDir string
+	Saver FileSaver
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -20,16 +24,14 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
+	fileData, err := ioutil.ReadAll(file)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Unable to read file", http.StatusBadRequest)
 		return
 	}
 
-	filePath := h.UploadDir + "/" + header.Filename
-
-	err = ioutil.WriteFile(filePath, data, 0777)
+	err = h.Saver.SaveFile(header.Filename, fileData)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Unable to save file", http.StatusInternalServerError)

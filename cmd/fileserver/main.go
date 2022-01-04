@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	uphand "mitasimo/gb-go-backend-1/internal/uploadhandler"
+	"mitasimo/gb-go-backend-1/internal/filelistener"
+	uploader "mitasimo/gb-go-backend-1/internal/uploadhandler"
 )
 
 var (
@@ -25,10 +26,13 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/upload", &uphand.Handler{
+	mux.Handle("/upload", &uploader.Handler{
 		UploadDir: uploadDir,
 	})
 	mux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(uploadDir))))
+	mux.Handle("/list", &filelistener.Handler{
+		UploadDir: uploadDir,
+	})
 
 	srv := &http.Server{
 		Addr:         ":" + serverPort,

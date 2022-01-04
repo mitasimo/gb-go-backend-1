@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"mitasimo/gb-go-backend-1/internal/filelistener"
+	"mitasimo/gb-go-backend-1/internal/enumeratorhandler"
 	"mitasimo/gb-go-backend-1/internal/localstorage"
 	"mitasimo/gb-go-backend-1/internal/uploadhandler"
 )
@@ -34,7 +34,7 @@ func main() {
 	mux.Handle("/upload", &uploadhandler.Handler{
 		Saver: storage,
 	})
-	mux.Handle("/list", &filelistener.Handler{
+	mux.Handle("/list", &enumeratorhandler.Handler{
 		Enumerator: storage,
 	})
 	mux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(uploadDir))))

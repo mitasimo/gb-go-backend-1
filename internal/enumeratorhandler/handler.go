@@ -1,4 +1,4 @@
-package filelistener
+package enumeratorhandler
 
 import (
 	"fmt"

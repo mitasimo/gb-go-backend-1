@@ -19,7 +19,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "Unable to read file", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Unable to read file: %v", err), http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
@@ -27,7 +27,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fileData, err := ioutil.ReadAll(file)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "Unable to read file", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Unable to read file data: %v", err), http.StatusBadRequest)
 		return
 	}
 

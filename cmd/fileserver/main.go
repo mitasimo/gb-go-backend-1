@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	uphand "mitasimo/gb-go-backend-1/internal/uploadhandler"
+	"mitasimo/gb-go-backend-1/internal/enumeratorhandler"
+	"mitasimo/gb-go-backend-1/internal/localstorage"
+	"mitasimo/gb-go-backend-1/internal/uploadhandler"
 )
 
 var (
@@ -24,9 +26,16 @@ func main() {
 		log.Fatalln("path to upload dir is not set")
 	}
 
+	storage := localstorage.Storage{
+		Dir: uploadDir,
+	}
+
 	mux := http.NewServeMux()
-	mux.Handle("/upload", &uphand.Handler{
-		UploadDir: uploadDir,
+	mux.Handle("/upload", &uploadhandler.Handler{
+		Saver: storage,
+	})
+	mux.Handle("/list", &enumeratorhandler.Handler{
+		Enumerator: storage,
 	})
 	mux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(uploadDir))))
 

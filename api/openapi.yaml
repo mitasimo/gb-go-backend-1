@@ -44,9 +44,9 @@ paths:
         - orders
       requestBody:
         description: order data
-        Content:
+        content:
           application/json:
-            Schema:
+            schema:
               $ref: "#/components/schemas/Order"
       responses:
         '201':

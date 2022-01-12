@@ -1,0 +1,144 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Homework 3 for curse 
+  license:
+    name: MIT
+paths:
+  /order:
+    get:
+      summary: List all orderss
+      operationId: listOrders
+      tags:
+        - orders
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: A paged array of orders
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Orders"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a order
+      operationId: createOrders
+      tags:
+        - orders
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /orders/{orderId}:
+    get:
+      summary: Info for a specific order
+      operationId: showOrderById
+      tags:
+        - orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: The id of the order to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    OrderItem:
+      description: строка заказа клиента
+      type: object
+      properties:
+        prouctID:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        qty:
+          type: integer
+          format: int32
+        price:
+          type: number
+          format: float
+    Order:
+      description: Заказ клинета
+      type: object
+      required:
+        - id
+        - number
+      properties:
+        id:
+          type: integer
+          format: int64
+        number:
+          type: string
+        shippingTo:
+          type: string
+        items:
+          type: array
+          items: 
+            $ref: "#/components/schemas/OrderItem"
+    OrdersListItem:
+      description: строка списка заказов клиентов
+      type: object
+      properties:
+        orderID:
+          type: integer
+          format: int64
+        orderNumber:
+          type: string
+        client:
+          type: string
+        total:
+          type: number
+          format: float
+    OrdersList:
+      description: список заказов клиентов
+      type: array
+      items:
+        $ref: "#/components/schemas/OrdersListItem"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

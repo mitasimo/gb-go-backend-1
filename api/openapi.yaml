@@ -30,7 +30,7 @@ paths:
           content:
             application/json:    
               schema:
-                $ref: "#/components/schemas/Orders"
+                $ref: "#/components/schemas/OrdersList"
         default:
           description: unexpected error
           content:
@@ -42,6 +42,12 @@ paths:
       operationId: createOrders
       tags:
         - orders
+      requestBody:
+        description: order data
+        Content:
+          application/json:
+            Schema:
+              $ref: "#/components/schemas/Order"
       responses:
         '201':
           description: Null response

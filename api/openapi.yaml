@@ -5,9 +5,9 @@ info:
   license:
     name: MIT
 paths:
-  /order:
+  /orders:
     get:
-      summary: List all orderss
+      summary: List all orders
       operationId: listOrders
       tags:
         - orders
@@ -38,7 +38,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     post:
-      summary: Create a order
+      summary: Create an order
       operationId: createOrders
       tags:
         - orders
@@ -80,7 +80,7 @@ paths:
 components:
   schemas:
     OrderItem:
-      description: строка заказа клиента
+      description: item of client order
       type: object
       properties:
         prouctID:
@@ -95,7 +95,7 @@ components:
           type: number
           format: float
     Order:
-      description: Заказ клинета
+      description: Client order
       type: object
       required:
         - id
@@ -113,7 +113,7 @@ components:
           items: 
             $ref: "#/components/schemas/OrderItem"
     OrdersListItem:
-      description: строка списка заказов клиентов
+      description: item of list of client orders
       type: object
       properties:
         orderID:
@@ -127,7 +127,7 @@ components:
           type: number
           format: float
     OrdersList:
-      description: список заказов клиентов
+      description: list of client order
       type: array
       items:
         $ref: "#/components/schemas/OrdersListItem"

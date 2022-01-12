@@ -43,7 +43,7 @@ paths:
       tags:
         - orders
       requestBody:
-        description: order data
+        description: Info of new order
         content:
           application/json:
             schema:
